@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "type": "logical",
+      "mode": "and",
+      "rules": [
+        {
+          "domain": [],
+          "domain_suffix": []
+        },
+        {
+          "domain": [],
+          "domain_suffix": [],
+          "invert": true
+        }
+      ]
+    }
+  ]
+}

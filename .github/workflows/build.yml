@@ -1,0 +1,39 @@
+name: build rule-set
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 每天UTC时间0点执行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
+      - name: Convert rules
+        run: |
+          python generate.py
+
+      - name: Compile sing-box srs
+        run: |
+          wget -O ./sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v1.8.8/sing-box-1.8.8-linux-amd64.tar.gz
+          tar -xzvf sing-box.tar.gz
+          chmod +x */sing-box
+          ./*/sing-box rule-set compile adblockfilters-sing.json
+          rm -rf *sing-box*
+
+      - name: Commit and Push if changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Automated commit by GitHub Action" -a || echo "No changes to commit"
+          git push
